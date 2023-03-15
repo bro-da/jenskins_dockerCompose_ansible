@@ -13,13 +13,13 @@
         chdir: "/home/vivans/tech/"
 
     - name: Bring up Compose project if it's down
-      command: docker-compose  up -d
+      command: docker-compose -p {{ compose_project_name }} up -d
       when: compose_status.rc != 0
       args:
         chdir: "/home/vivans/tech/"
 
     - name: Bring down Compose project if it's up
-      command: docker-compose down
+      command: docker-compose -p {{ compose_project_name }} down
       when: compose_status.rc == 0
       args:
         chdir: "/home/vivans/tech/"
