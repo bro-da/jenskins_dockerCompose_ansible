@@ -23,7 +23,7 @@ pipeline {
        stage('SSH') {
             steps {
                 
-                    sh 'ansible-playbook -1 "${MY_IP}," -u vivans docker-compose-playbook.yaml '
+                    sh 'ansible-playbook -i "${MY_IP}," -u vivans docker-compose-playbook.yaml '
                 
             }
         }
