@@ -18,16 +18,7 @@ pipeline {
                 git([url: 'https://github.com/bro-da/jenskins_dockerCompose_ansible.git'])
             }
         }
-        stage('list') {
-        
-            steps {
 
-                    sh 'ls -ahl'
-                   
-                
-            }
-        }
-        
         
        stage('SSH') {
         

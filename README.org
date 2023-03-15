@@ -1,0 +1,155 @@
+#+title: Readme
+** creating a new user
+As there is only a single root user ubuntu which requires pem key to function .It is a better option to create a user that has root privilages and switch to it the commands for that is
+#+begin_src shell
+sudo adduser userName  # creates a new user by setting up a user password
+sudo usermod -aG sudo userName # adds that user to root user list
+
+
+#+end_src
+
+
+now that user is creating we may login as that user after setting up that option in ssh config
+** setting up ssh keys
+
+
+first create ssh keys using the command
+#+begin_src shell
+ssh-keygen
+#+end_src
+you could setup both with pass phrase and without one.i setup one for manual testing with passphrase and one for jenkins which is without one
+my ssh failed couple of times when connecting from jenkins so i tryied  manually copying the key to the authorized_keys file on the remote server. you need to  copy the contents of the public key file (id_rsa.pub or id_ed25519.pub) and SSH into the remote server and append the authorized_keys file located in the user's home directory in .ssh/authorized_keys). Paste the contents of the public key into the file.
+you need to choose a loaction and input a passphrase for added security once the key is generated you need to copy the public into the server using ssh keys
+#+begin_src shell
+ssh-copy-id username@server_ip_address
+#+end_src
+
+or copy
+
+you may get a error so first copy the private into hosts ssh directory first so login can work successfully
+then we can login into the server using if u setup custom location
+#+begin_src shell
+ssh username@ip address
+#+end_src
+
+** installing docker
+since the jenkins is installed using docker we first need docker and its components
+so go into the [[https://docs.docker.com/engine/install/ubuntu/][official site]] for installation on ubuntu
+#+begin_src shell
+sudo apt-get update
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+sudo mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# we should not run docker using root or have to type sudo everytime
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+#test it out
+docker run hello-world
+#enable docker restart on server Boot
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
+#+end_src
+
+** installing jenkins on docker
+first i used the basic [[https://hub.docker.com/r/jenkins/jenkins][official jenkins docker image]]  and wwnt on to building pipelines then i found out you cant ansible from jenkins even if we installed on the host server because jenkins docker doesnt have ansible and dont have access to packages on the host server
+so i tried many methods and i decisied to build a custom docker image using the jenkins official image as base and install ansible on it so to make sure not to make it heavy i decided to select the [[https://hub.docker.com/layers/jenkins/jenkins/alpine/images/sha256-c1ca02cf9ce169d929e74804d06255445015057884e608426c592cc23faea2f7?context=explore][alpine version]]
+i created the docker file as such
+#+begin_src dockerfile
+FROM jenkins/jenkins:alpine
+
+USER root
+
+RUN apk add --no-cache ansible openssh-client
+
+USER jenkins
+#+end_src
+
+i tried other methods but this seemed to work
+i build the image on server so i dont have to go through the process of pushing to a docker repositary
+i run the docker container with the command
+#+begin_src shell
+docker run -d -v jenkins_home:/var/jenkins_home -p 5062:8080   --restart=on-failure jenkinsansible
+#+end_src
+so that the container could run detached with volume mount and on port 5062 as per specification i  got this from the [[https://github.com/jenkinsci/docker/blob/master/README.md][official documentation ]] so i got into the web gui through the ipAddress:5062 if we log the docker container we could find the secret key for first login go the through plugin installation and setting up a user
+create a pipeline i selected pipeline from scm but i think a freestyle would have been better
+** setting up a pipeline
+i tried with try and error to build the pipeline took a lots of build mostly because i forgot how setup variables and scret in jenkins and also because setting up ssh connection from jenkins to host server finally i got this jenkins file
+#+begin_src groovy
+pipeline {
+    agent any
+    environment {
+        MY_IP = sh(script: "curl -4 http://icanhazip.com", returnStdout: true).trim()
+
+    }
+
+    options {
+        skipStagesAfterUnstable()
+        timeout(time: 1, unit: 'HOURS')
+        // failFast is not a valid option type
+    }
+
+    stages {
+        stage('Cloning Git') {
+            steps {
+                git([url: 'https://github.com/bro-da/jenskins_dockerCompose_ansible.git'])
+            }
+        }
+
+
+
+       stage('SSH') {
+
+            steps {
+
+
+                    sh 'ansible-playbook -i inventory ${my_ip} -u vivans docker-compose-playbook.yaml '
+
+            }
+        }
+
+        // Other stages can be added here
+    }
+}
+
+#+end_src
+i could secure it if given more time and i forgot how to setup secrets using creditionals.it had more code i tried to make it as simple as possible i used curl to get the host server so during each restart the code will work
+** setuping ansible
+since jenkins docker container needs to have access to ansible i put it inside the container and docker compose work inside the host and is controlled from container using ansible so docker compose can be isntalled in host server
+i created a new ssh keys from inside the jenkins docker container using
+#+begin_src shell
+docker exec -it jenkinsansible /bin/sh
+#+end_src
+and getting a shell inside the docker container and created a ssh keys without passphrase and copied the public keys into the host server authorised keys and so jenkins conect connect into host server and input ansible commands
+
+i ran into issues when ansible couldnt find the docker-compose.yml so edited the ansible to to look for the docker compose inside the host server and hard coded the path same as that i had to hard code some details inside ansible inventory files I thought i could give everything as coommandline arguments but it didnt happen .i had to hardcode and even make the code insecure i mainly focused on making it work as fast as possible.i am not enough profficient in ansible playbook so i mainly copied the code from internet
+** docker-compose
+i made a docker compose file using the video tutorial from using this [[https://www.youtube.com/watch?v=3c-iBn73dDE][tutorial]] because i did this before and i knew this would work
+#+begin_src yaml
+version: '3'
+services:
+  mongodb:
+    image: mongo
+    ports:
+     - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+#+end_src
+
+its a simple mongodb docker-compose file i hardcoded every variables because i thought maybe only the 6062 code maybe open so there wouldnt be any risk.
+notes : i dont know to check if docker-compose is up or not and
+
+all code can be found at [[https://github.com/bro-da/jenskins_dockerCompose_ansible][github]]

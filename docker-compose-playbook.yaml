@@ -2,21 +2,24 @@
   hosts: web_servers
   become: true
   vars:
-    compose_project_path: "/home/vivans/tech"
+    compose_project_path: "{{ playbook_dir }}"
     compose_project_name: "mongodb"
   tasks:
     - name: Check Docker Compose status
-      docker_compose:
-        project_src: "{{ compose_project_path }}"
-        project_name: "{{ compose_project_name }}"
-        state: 'changed'
-        validate_certs: no
+      command: docker-compose -p {{ compose_project_name }} ps --services --filter "status=running"
       register: compose_status
+      ignore_errors: true
+      args:
+        chdir: "/home/vivans/tech/"
+
+    - name: Bring up Compose project if it's down
+      command: docker-compose -p {{ compose_project_name }} up -d
+      when: compose_status.rc != 0
+      args:
+        chdir: "/home/vivans/tech/"
 
     - name: Bring down Compose project if it's up
-      docker_compose:
-        project_src: "{{ compose_project_path }}"
-        project_name: "{{ compose_project_name }}"
-        state: 'absent'
-        validate_certs: no
-      when: compose_status.changed
+      command: docker-compose -p {{ compose_project_name }} down
+      when: compose_status.rc == 0
+      args:
+        chdir: "/home/vivans/tech/"
