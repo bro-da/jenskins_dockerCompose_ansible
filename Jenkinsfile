@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'linux'
+    }
     
     environment {
         DATE = new Date().format('yy.M')
@@ -8,6 +10,7 @@ pipeline {
     
     options {
         skipStagesAfterUnstable()
+        failFast true
     }
 
     stages {
@@ -17,15 +20,13 @@ pipeline {
             }
         }
         
-        stage('SSH') {
-            steps {
-                {
-                    sshagent(credentials: ['ansible-ssh']) {
-                        sh "ssh -o StrictHostKeyChecking=no vivans@${MY_IP} whoami"
-                    }
-                }
-            }
+       stage('SSH') {
+    script {
+        sshagent(credentials: ['ansible-ssh']) {
+            sh "ssh -o StrictHostKeyChecking=no vivans@${MY_IP} whoami"
         }
+    }
+}
          
         // Other stages can be added here
     }
