@@ -3,6 +3,7 @@ pipeline {
     
     environment {
         DATE = new Date().format('yy.M')
+        MY_IP = sh(script: "curl -4 http://icanhazip.com", returnStdout: true).trim()
     }
     
     options {
@@ -16,15 +17,18 @@ pipeline {
             }
         }
         
-stage('SSH') {
-    steps {
-        sshagent(credentials: ['ansible-ssh']) {
-             sh 'ssh  -o StrictHostKeyChecking=no  vivans@20.235.240.117 whoami '
+        stage('SSH') {
+            steps {
+                withCredentials([
+                    
+                    secret(credentialsId: 'USER_SERVER', variable: 'SSH_USER')
+                ]) {
+                    sshagent(['ansible-ssh']) {
+                        sh "ssh -o StrictHostKeyChecking=no ${SSH_USER}@$${MY_IP} whoami"
+                    }
+                }
+            }
         }
-    }
-}
-
-
          
         // Other stages can be added here
     }
