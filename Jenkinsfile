@@ -19,7 +19,7 @@ pipeline {
 stage('SSH') {
     steps {
         sshagent(credentials: ['ansible-ssh']) {
-            ssh remote: 'vivans@20.235.240.117', command: 'echo 1234 > text.txt'
+            sh 'ssh -o StrictHostKeyChecking=no -l vivans@20.235.240.117 echo 1234 >> text.txt'
         }
     }
 }
