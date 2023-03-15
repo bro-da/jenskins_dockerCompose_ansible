@@ -1,5 +1,5 @@
 - name: Docker Compose Up/Down playbook
-  hosts: localhost
+  hosts: remote
   become: true
   vars:
     compose_project_path: "./"
