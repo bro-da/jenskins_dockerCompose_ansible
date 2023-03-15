@@ -23,11 +23,7 @@ pipeline {
          
 	}
 
-	post {
-		always {
-			sh 'docker ps'
-		}
-	}
+	
         
     }
     
