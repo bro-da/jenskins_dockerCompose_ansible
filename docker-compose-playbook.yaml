@@ -13,7 +13,7 @@
         chdir: "/home/vivans/tech/"
 
     - name: Bring up Compose project if it's down
-      command: docker-compose -f docker-compose.yml up -d
+      command: docker-compose  up -d
       when: compose_status.rc != 0
       args:
         chdir: "/home/vivans/tech/"
