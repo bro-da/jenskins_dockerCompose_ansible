@@ -3,7 +3,7 @@
   become: true
   vars:
     compose_project_path: "{{ playbook_dir }}"
-    compose_project_name: "docker-compose.yml"
+    compose_project_name: "mongodb"
   tasks:
     - name: Check Docker Compose status
       command: docker-compose -p {{ compose_project_name }} ps --services --filter "status=running"
