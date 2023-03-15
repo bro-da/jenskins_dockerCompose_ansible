@@ -22,7 +22,7 @@ pipeline {
     //             }
     //         }
     //     }
-       stage('Example') {
+       stages ('Example') {
     withCredentials([
         string(credentialsId: 'IPADDR', variable: 'secret1'),
         string(credentialsId: 'USER_SERVER', variable: 'secret2')
