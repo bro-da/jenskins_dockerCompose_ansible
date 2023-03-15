@@ -18,15 +18,10 @@ pipeline {
         
         stage('SSH') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'IPADDR', variable: 'secret1'),
-                    string(credentialsId: 'USER_SERVER', variable: 'secret2')
+                    string(credentialsId: 'IPADDR', variable: 'ipAddr'),
+                    string(credentialsId: 'USER_SERVER', variable: 'userServer')
                 ]) {
-                    sh '''
-                        sh "ssh vivans@20.235.240.117  'echo \"Secret 1 value: $secret1\" >> text.txt'"
-                        
-                        sh "ssh vivans@20.235.240.117 'echo \"Secret 1 value: $secret1\" >> text.txt'"
-                    '''
+                 sh "ssh ${userServer}@${ipAddr} echo 1234 > text.txt"
                 }
             }
         }
