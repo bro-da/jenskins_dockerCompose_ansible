@@ -1,8 +1,5 @@
 pipeline {
-    agent {
-        label 'linux'
-    }
-    
+    agent any
     environment {
         DATE = new Date().format('yy.M')
         MY_IP = sh(script: "curl -4 http://icanhazip.com", returnStdout: true).trim()
