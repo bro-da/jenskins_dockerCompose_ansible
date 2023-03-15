@@ -16,17 +16,20 @@ pipeline {
             }
         }
         
-        stage('SSH') {
-            steps {
-                withCredentials([
-                    string(credentialsId: 'IPADDR', variable: 'ipAddr'),
-                    string(credentialsId: 'USER_SERVER', variable: 'userServer')
-                ]) {
-                    sh "ssh ${userServer}@${ipAddr} echo helloworld >> text.txt"
-                }
-            }
-        }
-         
+        // stage('SSH') {
+        //     steps {
+        //         sshagent(credentials: ['IPADDR', 'USER_SERVER']) {
+        //             sh 'ssh ${env.USER_SERVER}@${env.IPADDR} echo helloworld >> text.txt'
+        //         }
+        //     }
+        // }
+        steps {
+    sshagent(credentials: ['ansible-ssh']) {
+      sh '''
+          echo 1234 > text.txt
+      '''
+    }
+} 
         // Other stages can be added here
     }
 }
