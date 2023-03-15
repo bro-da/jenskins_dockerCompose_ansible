@@ -11,7 +11,7 @@
       ignore_errors: true
 
     - name: Bring up Compose project if it's down
-      command: docker-compose up -d
+      command: docker-compose up 
       when: compose_status.rc != 0
 
     - name: Bring down Compose project if it's up
