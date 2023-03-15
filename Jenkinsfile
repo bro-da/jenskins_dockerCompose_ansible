@@ -23,7 +23,7 @@ pipeline {
        stage('SSH') {
             steps {
                 
-                    sh "ssh -o StrictHostKeyChecking=no vivans@${MY_IP} whoami"
+                    sh 'ansible-playbook -i ${MY_IP} -u vivans docker-compose-playbook.yaml '
                 
             }
         }
