@@ -8,7 +8,6 @@ pipeline {
     
     options {
         skipStagesAfterUnstable()
-        retry(3)
         timeout(time: 1, unit: 'HOURS')
         // failFast is not a valid option type
     }
