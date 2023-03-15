@@ -23,7 +23,7 @@ pipeline {
        stage('SSH') {
             steps {
                 
-                    sh 'ansible-playbook -i inventory docker-compose-playbook.yaml '
+                    sh 'ansible-playbook -i inventory -u vivans docker-compose-playbook.yaml '
                 
             }
         }
