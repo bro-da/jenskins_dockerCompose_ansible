@@ -14,7 +14,7 @@
 
     - name: Bring up Compose project if it's down
       command: docker-compose  up -d
-      when: true
+      when: compose_status.rc != 0
       args:
         chdir: "/home/vivans/tech/"
 
