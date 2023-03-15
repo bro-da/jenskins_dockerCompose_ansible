@@ -5,11 +5,13 @@
     compose_project_path: "{{ playbook_dir }}"
     compose_project_name: "mongodb"
   tasks:
-    - name: Check Docker Compose status
-      command: docker-compose -p {{ compose_project_name }} ps --services --filter "status=running"
-      register: compose_status
-      ignore_errors: true
-      args:
+    -  name: Check Docker Compose status
+       shell: docker ps --filter "status=running" --format '{{.Names}}' | grep -q {{ compose_project_name }}
+       register: compose_status
+       retries: 10
+       delay: 5
+       until: compose_status.rc == 0
+       args:
         chdir: "/home/vivans/tech/"
 
     - name: Bring up Compose project if it's down
