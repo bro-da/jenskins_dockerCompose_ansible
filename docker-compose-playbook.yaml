@@ -9,7 +9,7 @@
       docker_compose:
         project_src: "{{ compose_project_path }}"
         project_name: "{{ compose_project_name }}"
-        state: 'started'
+        state: 'changed'
         validate_certs: no
       register: compose_status
 
