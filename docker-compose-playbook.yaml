@@ -2,7 +2,7 @@
   hosts: web_servers
   become: true
   vars:
-    compose_project_path: "./"
+    compose_project_path: "{{ playbook_dir }}"
     compose_project_name: "mongo.yaml"
   tasks:
     - name: Check Docker Compose status
