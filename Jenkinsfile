@@ -22,7 +22,7 @@ pipeline {
                     string(credentialsId: 'IPADDR', variable: 'ipAddr'),
                     string(credentialsId: 'USER_SERVER', variable: 'userServer')
                 ]) {
-                    sh "ssh ${userServer}@${ipAddr} echo 1234 > text.txt"
+                    sh "ssh ${userServer}@${ipAddr} echo helloworld >> text.txt"
                 }
             }
         }
