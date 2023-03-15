@@ -22,10 +22,10 @@ pipeline {
                 withCredentials([
                     
                     secret(credentialsId: 'USER_SERVER', variable: 'SSH_USER')
-                ]) {
-                    
-                        sh "ssh -o StrictHostKeyChecking=no ${SSH_USER}@${MY_IP} whoami"
-                    }
+                ])  sshagent(credentials: ['ansible-ssh']) {
+             
+             sh 'ssh  -o StrictHostKeyChecking=no  ${SSH_USER}@${MY_IP} whoami '
+        }
                 }
             }
         }
