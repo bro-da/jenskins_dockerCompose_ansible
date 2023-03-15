@@ -23,9 +23,9 @@ pipeline {
                     string(credentialsId: 'USER_SERVER', variable: 'secret2')
                 ]) {
                     sh '''
-                        echo "Secret 1 value: $secret1" >> text.txt
+                        sh "ssh vivans@20.235.240.117  'echo \"Secret 1 value: $secret1\" >> text.txt'"
                         
-                        echo "Secret 2 value: $secret2" >> text.txt
+                        sh "ssh vivans@20.235.240.117 'echo \"Secret 1 value: $secret1\" >> text.txt'"
                     '''
                 }
             }
