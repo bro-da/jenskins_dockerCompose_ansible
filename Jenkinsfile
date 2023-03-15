@@ -18,14 +18,22 @@ pipeline {
                 git([url: 'https://github.com/bro-da/jenskins_dockerCompose_ansible.git'])
             }
         }
+        stage('list') {
+        
+            steps {
+
+                    sh 'ls -ahl'
+                   
+                
+            }
+        }
         
         
        stage('SSH') {
         
             steps {
 
-                    sh 'ls -ahl'
-                    sh 'pwd'
+                    
                     sh 'ansible-playbook -i inventory ${my_ip} -u vivans docker-compose-playbook.yaml '
                 
             }
