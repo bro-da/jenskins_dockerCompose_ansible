@@ -12,8 +12,12 @@
 
     - name: Bring up Compose project if it's down
       command: docker-compose -p {{ compose_project_name }} up -d
+      args:
+        chdir: "{{ compose_project_path }}"
       when: compose_status.rc != 0
 
     - name: Bring down Compose project if it's up
       command: docker-compose -p {{ compose_project_name }} down
+      args:
+        chdir: "{{ compose_project_path }}"
       when: compose_status.rc == 0
