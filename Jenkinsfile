@@ -10,7 +10,9 @@ pipeline {
     
     options {
         skipStagesAfterUnstable()
-        failFast true
+        retry(3)
+        timeout(time: 1, unit: 'HOURS')
+        // failFast is not a valid option type
     }
 
     stages {
@@ -21,12 +23,12 @@ pipeline {
         }
         
        stage('SSH') {
-    script {
-        sshagent(credentials: ['ansible-ssh']) {
-            sh "ssh -o StrictHostKeyChecking=no vivans@${MY_IP} whoami"
+            steps {
+                sshagent(credentials: ['ansible-ssh']) {
+                    sh "ssh -o StrictHostKeyChecking=no vivans@${MY_IP} whoami"
+                }
+            }
         }
-    }
-}
          
         // Other stages can be added here
     }
