@@ -3,7 +3,7 @@
   become: true
   vars:
     compose_project_path: "{{ playbook_dir }}"
-    compose_project_name: "docker-compose.yaml"
+    compose_project_name: "docker-compose.yml"
   tasks:
     - name: Check Docker Compose status
       command: docker-compose -p {{ compose_project_name }} ps --services --filter "status=running"
@@ -11,9 +11,9 @@
       ignore_errors: true
 
     - name: Bring up Compose project if it's down
-      command: docker-compose -p {{ compose_project_name }} up -d
+      command: docker-compose up -d
       when: compose_status.rc != 0
 
     - name: Bring down Compose project if it's up
-      command: docker-compose -p {{ compose_project_name }} down
+      command: docker-compose  down
       when: compose_status.rc == 0
