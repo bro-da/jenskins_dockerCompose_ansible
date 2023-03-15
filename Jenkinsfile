@@ -19,7 +19,7 @@ pipeline {
 stage('SSH') {
     steps {
         sshagent(credentials: ['ansible-ssh']) {
-             sh 'ssh  -o StrictHostKeyChecking=no  vivans@20.235.240.117 uptime "whoami"'
+             sh 'ssh  -o StrictHostKeyChecking=no  vivans@20.235.240.117 whoami '
         }
     }
 }
