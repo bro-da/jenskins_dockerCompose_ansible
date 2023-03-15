@@ -18,8 +18,8 @@
       args:
         chdir: "/home/vivans/tech/"
 
-    # - name: Bring down Compose project if it's up
-    #   command: docker-compose down
-    #   when: compose_status.rc == 0
-    #   args:
-    #     chdir: "/home/vivans/tech/"
+    - name: Bring down Compose project if it's up
+      command: docker-compose down
+      when: compose_status.rc == 0
+      args:
+        chdir: "/home/vivans/tech/"
