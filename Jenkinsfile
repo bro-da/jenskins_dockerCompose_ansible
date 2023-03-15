@@ -23,7 +23,7 @@ pipeline {
                     secret(credentialsId: 'USER_SERVER', variable: 'SSH_USER')
                 ]) {
                     sshagent(credentials: ['ansible-ssh']) {
-                        sh "ssh -o StrictHostKeyChecking=no ${SSH_USER}@${MY_IP} whoami"
+                        sh "ssh -o StrictHostKeyChecking=no vivans@${MY_IP} whoami"
                     }
                 }
             }
