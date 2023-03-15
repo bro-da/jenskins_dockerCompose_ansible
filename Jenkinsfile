@@ -3,6 +3,9 @@ pipeline {
     environment {
         DATE = new Date().format('yy.M')
         MY_IP = sh(script: "curl -4 http://icanhazip.com", returnStdout: true).trim()
+
+        server_user = credentials('username')
+    
     }
     
     options {
@@ -22,7 +25,7 @@ pipeline {
        stage('SSH') {
             steps {
                 
-                    sh "ssh -o StrictHostKeyChecking=no vivans@${MY_IP} whoami"
+                    sh "ssh -o StrictHostKeyChecking=no ${server_user}@${MY_IP} whoami"
                 
             }
         }
