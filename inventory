@@ -1,2 +1,2 @@
-[local]
+[web_servers]
 20.235.240.117 ansible_user=vivans
