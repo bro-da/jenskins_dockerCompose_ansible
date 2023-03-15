@@ -15,6 +15,13 @@ pipeline {
  
       }
     }
+     stage('SSH') {
+            steps {
+                sshagent (credentials: ['ansible-ssh']) {
+                    sh 'ssh <remote-user>@<remote-host> "echo hell > text.txt"'
+                }
+            }
+        }
         stage('run the playbook') {
             steps {
                 sh 'ansible-playbook docker-compose-playbook.yaml'
