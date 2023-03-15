@@ -16,14 +16,14 @@ pipeline {
             }
         }
         
-        stage('SSH') {
-            steps {
-                sshagent(credentials: ['ansible-ssh']) {
-                              ssh host: 'vivans@20.235.240.117', command: 'echo 1234 > text.txt'
-
-                }
-            }
+stage('SSH') {
+    steps {
+        sshagent(credentials: ['ansible-ssh']) {
+            ssh remote: 'vivans@20.235.240.117', command: 'echo 1234 > text.txt'
         }
+    }
+}
+
          
         // Other stages can be added here
     }
