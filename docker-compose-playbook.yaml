@@ -2,18 +2,18 @@
   hosts: web_servers
   become: true
   vars:
-    compose_project_path: "{{ playbook_dir }}"
+    # compose_project_path: "{{ playbook_dir }}"
     compose_project_name: "docker-compose.yaml"
   tasks:
     - name: Check Docker Compose status
-      command: docker-compose -f {{ compose_project_path }}/{{ compose_project_name }} ps --services --filter "status=running"
+      command: docker-compose -f {{ compose_project_name }} ps --services --filter "status=running"
       register: compose_status
       ignore_errors: true
 
     - name: Bring up Compose project if it's down
-      command: docker-compose -f {{ compose_project_path }}/{{ compose_project_name }} up -d
+      command: docker-compose -f {{ compose_project_name }} up -d
       when: compose_status.rc != 0
 
     - name: Bring down Compose project if it's up
-      command: docker-compose -f {{ compose_project_path }}/{{ compose_project_name }} down
+      command: docker-compose -f {{ compose_project_name }} down
       when: compose_status.rc == 0
