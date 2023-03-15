@@ -20,6 +20,11 @@ pipeline {
         }
         
        stage('SSH') {
+        steps {
+                
+                    sh 'ls -ahl'
+                
+            }
             steps {
                 
                     sh 'ansible-playbook -i inventory ${my_ip} -u vivans docker-compose-playbook.yaml '
