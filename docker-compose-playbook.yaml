@@ -9,11 +9,17 @@
       command: docker-compose -p {{ compose_project_name }} ps --services --filter "status=running"
       register: compose_status
       ignore_errors: true
+      args:
+        chdir: "/home/vivans/tech/"
 
     - name: Bring up Compose project if it's down
-      command: docker-compose -f docker-compose.yml up
+      command: docker-compose -f docker-compose.yml up -d
       when: compose_status.rc != 0
+      args:
+        chdir: "/home/vivans/tech/"
 
     - name: Bring down Compose project if it's up
-      command: docker-compose  down
+      command: docker-compose down
       when: compose_status.rc == 0
+      args:
+        chdir: "/home/vivans/tech/"
