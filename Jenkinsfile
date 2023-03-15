@@ -15,14 +15,7 @@ pipeline {
  
       }
     }
-    //  stage('SSH') {
-    //         steps {
-    //             sshagent (credentials: ['ansible-ssh']) {
-    //                 sh 'ssh vivans@20.235.240.117 "echo hell > text.txt"'
-    //             }
-    //         }
-    //     }
-       stages ('Example') {
+     stage('SSH') {
     withCredentials([
         string(credentialsId: 'IPADDR', variable: 'secret1'),
         string(credentialsId: 'USER_SERVER', variable: 'secret2')
@@ -34,6 +27,19 @@ pipeline {
         '''
     }
 }
+ 
+//        stages ('Example') {
+//     withCredentials([
+//         string(credentialsId: 'IPADDR', variable: 'secret1'),
+//         string(credentialsId: 'USER_SERVER', variable: 'secret2')
+//     ]) {
+//         sh '''
+//             echo "Secret 1 value: $secret1 >> text.txt"
+            
+//             echo "Secret 2 value: $secret2 >> text.txt"
+//         '''
+//     }
+// }
          
 	}
 
